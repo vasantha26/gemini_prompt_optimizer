@@ -1,0 +1,70 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Gemini Prompt Optimizer Live Test</title>
+    <style>
+        body { font-family: Arial, sans-serif; max-width: 800px; margin: 40px auto; padding: 20px; background: #f4f7f6; }
+        .card { background: white; padding: 20px; border-radius: 8px; box-shadow: 0 2px 4px rgba(0,0,0,0.1); margin-bottom: 20px; }
+        textarea { width: 100%; height: 100px; padding: 10px; margin-top: 5px; border-radius: 4px; border: 1px solid #ccc; }
+        button { background: #4CAF50; color: white; border: none; padding: 10px 20px; font-size: 16px; border-radius: 4px; cursor: pointer; margin-top: 10px; }
+        button:hover { background: #45a049; }
+        pre { background: #eee; padding: 10px; border-radius: 4px; white-space: pre-wrap; }
+        .loading { color: #e67e22; font-weight: bold; display: none; }
+    </style>
+</head>
+<body>
+
+    <div class="card">
+        <h2>🚀 Gemini Prompt Optimizer</h2>
+        <label for="promptInput">Enter your Raw Prompt / Big Question:</label>
+        <textarea id="promptInput" placeholder="Type your long, messy prompt here... e.g., 'Hi can you please write a python script to check files...'"></textarea>
+        <button onclick="sendPrompt()">Optimize</button>
+        <span id="loadingText" class="loading">Processing with Gemini API... Please wait...</span>
+    </div>
+
+    <div class="card" id="resultCard" style="display:none;">
+        <h3>📊 Results:</h3>
+        <h4>✨ Optimized Prompt (Token Saved):</h4>
+        <pre id="optPromptResult"></pre>
+
+        <!-- Final output disabled. To enable: uncomment this and the line in sendPrompt()
+        <h4>🎯 Final Output from Gemini:</h4>
+        <pre id="finalOutputResult"></pre>
+        -->
+    </div>
+
+    <script>
+        async function sendPrompt() {
+            const promptText = document.getElementById('promptInput').value;
+            if(!promptText) { alert('Please enter a prompt!'); return; }
+
+            document.getElementById('loadingText').style.display = 'inline';
+            document.getElementById('resultCard').style.display = 'none';
+
+            try {
+                const response = await fetch('http://127.0.0.1:8000/optimize-and-run', {
+                    method: 'POST',
+                    headers: { 'Content-Type': 'application/json' },
+                    body: JSON.stringify({ user_id: "vasantha_user", raw_prompt: promptText })
+                });
+
+                const data = await response.json();
+                if(response.ok) {
+                    document.getElementById('optPromptResult').innerText = data.optimized_prompt;
+                    // document.getElementById('finalOutputResult').innerText = data.final_output;
+                    document.getElementById('resultCard').style.display = 'block';
+                } else {
+                    alert('Error: ' + data.detail);
+                }
+            } catch (err) {
+                alert('Failed to connect to backend server!');
+                console.error(err);
+            } finally {
+                document.getElementById('loadingText').style.display = 'none';
+            }
+        }
+    </script>
+</body>
+</html>

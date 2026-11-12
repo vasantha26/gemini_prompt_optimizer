@@ -1,0 +1,22 @@
+[project]
+name = "gemini-prompt-optimizer"
+version = "0.1.0"
+description = "Add your description here"
+readme = "README.md"
+authors = [
+    { name = "vasantha", email = "vasanthamanikandan@maheshvalue.com" }
+]
+requires-python = ">=3.12"
+dependencies = [
+    "fastapi>=0.146.0",
+    "google-genai>=2.31.0",
+    "python-dotenv>=1.2.4",
+    "uvicorn>=0.54.0",
+]
+
+[project.scripts]
+gemini-prompt-optimizer = "gemini_prompt_optimizer:main"
+
+[build-system]
+requires = ["uv_build>=0.12.23,<0.13.0"]
+build-backend = "uv_build"
